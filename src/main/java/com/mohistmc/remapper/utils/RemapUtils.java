@@ -18,15 +18,17 @@
 
 package com.mohistmc.remapper.utils;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.mohistmc.remapper.model.ClassMapping;
 import com.mohistmc.remapper.remappers.ClassRemapperSupplier;
-import com.mohistmc.remapper.remappers.MohistInheritanceMap;
 import com.mohistmc.remapper.remappers.MohistJarMapping;
 import com.mohistmc.remapper.remappers.MohistJarRemapper;
 import com.mohistmc.remapper.remappers.MohistSuperClassRemapper;
 import com.mohistmc.remapper.remappers.ReflectMethodRemapper;
 import com.mohistmc.remapper.remappers.ReflectRemapper;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
@@ -34,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.md_5.specialsource.InheritanceMap;
+import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -54,16 +59,16 @@ public class RemapUtils {
     private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
-    public static void init(InputStream in) {
+    public static void init(InputStream spigot2srg, InputStream inheritanceMap) {
         jarMapping = new MohistJarMapping();
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
-        jarMapping.setInheritanceMap(new MohistInheritanceMap());
+        jarMapping.setInheritanceMap(getGlobalInheritanceMap(spigot2srg, inheritanceMap));
         try {
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(in)),
+                    new BufferedReader(new InputStreamReader(spigot2srg)),
                     new MavenShade(relocations),
                     null, false);
         } catch (Exception e) {
@@ -182,4 +187,43 @@ public class RemapUtils {
     public static boolean needRemap(String className){
         return className.startsWith("net.minecraft.");
     }
+
+    // Cauldron start
+    private static InheritanceMap globalInheritanceMap = null;
+
+    /**
+     * Get the inheritance map for remapping all plugins
+     */
+    public static InheritanceMap getGlobalInheritanceMap(InputStream spigot2srg, InputStream inheritanceMap) {
+        if (globalInheritanceMap == null) {
+            Map<String, String> relocationsCurrent = new HashMap<>();
+            JarMapping currentMappings = new JarMapping();
+
+            try {
+                currentMappings.loadMappings(
+                        new BufferedReader(new InputStreamReader(spigot2srg)),
+                        new MavenShade(relocationsCurrent),
+                        null, false);
+            } catch (IOException ex) {
+                ex.fillInStackTrace();
+                throw new RuntimeException(ex);
+            }
+
+            BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
+            globalInheritanceMap = new InheritanceMap();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inheritanceMap));
+
+            try {
+                globalInheritanceMap.load(reader, inverseClassMap);
+            } catch (IOException ex) {
+                ex.fillInStackTrace();
+                throw new RuntimeException(ex);
+            }
+            System.out.println("Loaded inheritance map of " + globalInheritanceMap.size() + " classes");
+        }
+
+        return globalInheritanceMap;
+    }
+    // Cauldron end
 }
