@@ -16,17 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.utils;
+package com.mohistmc.remapper.utils;
 
-import com.mohistmc.mohistremap.model.ClassMapping;
-import com.mohistmc.mohistremap.remappers.ClassRemapperSupplier;
-import com.mohistmc.mohistremap.remappers.MohistInheritanceMap;
-import com.mohistmc.mohistremap.remappers.MohistInheritanceProvider;
-import com.mohistmc.mohistremap.remappers.MohistJarMapping;
-import com.mohistmc.mohistremap.remappers.MohistJarRemapper;
-import com.mohistmc.mohistremap.remappers.MohistSuperClassRemapper;
-import com.mohistmc.mohistremap.remappers.ReflectMethodRemapper;
-import com.mohistmc.mohistremap.remappers.ReflectRemapper;
+import com.mohistmc.remapper.model.ClassMapping;
+import com.mohistmc.remapper.remappers.ClassRemapperSupplier;
+import com.mohistmc.remapper.remappers.MohistInheritanceMap;
+import com.mohistmc.remapper.remappers.MohistJarMapping;
+import com.mohistmc.remapper.remappers.MohistJarRemapper;
+import com.mohistmc.remapper.remappers.MohistSuperClassRemapper;
+import com.mohistmc.remapper.remappers.ReflectMethodRemapper;
+import com.mohistmc.remapper.remappers.ReflectRemapper;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,22 +54,20 @@ public class RemapUtils {
     private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
-    public static void init(InputStream is) {
+    public static void init(InputStream in) {
         jarMapping = new MohistJarMapping();
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
-        jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
-
         try {
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(is)),
+                    new BufferedReader(new InputStreamReader(in)),
                     new MavenShade(relocations),
                     null, false);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
         jarRemapper = new MohistJarRemapper(jarMapping);
         remappers.add(jarRemapper);
@@ -79,15 +76,15 @@ public class RemapUtils {
         ReflectMethodRemapper.init();
 
         try {
-            Class.forName("com.mohistmc.mohistremap.proxy.ProxyMethodHandlesLookup");
+            Class.forName("com.mohistmc.remapper.proxy.ProxyMethodHandlesLookup");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
 
     public static byte[] remapFindClass(byte[] bs) {
-        ClassReader reader = new ClassReader(bs); // Turn from bytes into visitor
+        ClassReader reader = new ClassReader(bs); // Turn from bytes into a visitor
         ClassNode classNode = new ClassNode();
         reader.accept(classNode, ClassReader.EXPAND_FRAMES);
         for (Remapper remapper : remappers) {

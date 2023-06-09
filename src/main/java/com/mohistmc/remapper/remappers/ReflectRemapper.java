@@ -16,18 +16,35 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy.asm;
+package com.mohistmc.remapper.remappers;
 
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
 
 /**
  *
  * @author pyz
- * @date 2019/7/15 8:52 PM
+ * @date 2019/7/2 8:05 PM
  */
-public class ProxyClassWriter {
+public class ReflectRemapper extends Remapper implements ClassRemapperSupplier {
 
-    public static byte[] remapClass(byte[] code) {
-        return RemapUtils.remapFindClass(code);
+    /**
+     *
+     * @param classWriter
+     * @return
+     */
+    @Override
+    public ClassRemapper getClassRemapper(ClassVisitor classWriter) {
+        return new MohistClassRemapper(classWriter, this);
+    }
+
+    @Override
+    public String mapSignature(String signature, boolean typeSignature) {
+        try {
+            return super.mapSignature(signature, typeSignature);
+        } catch (Exception e) {
+            return signature;
+        }
     }
 }

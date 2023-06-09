@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy;
+package com.mohistmc.remapper.proxy;
 
 import com.mohistmc.dynamicenum.MohistDynamEnum;
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.remapper.model.ClassMapping;
+import com.mohistmc.remapper.utils.RemapUtils;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -62,8 +63,12 @@ public class DelegateURLClassLoder extends URLClassLoader {
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         if (RemapUtils.needRemap(name)) {
-            String mapName = RemapUtils.map(name.replace('.', '/')).replace('/', '.');
-            return Class.forName(mapName);
+            ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
+            if(remappedClassMapping == null){
+                throw new ClassNotFoundException(name.replace('/','.'));
+            }
+            String remappedClass = remappedClassMapping.getMcpName();
+            return Class.forName(remappedClass);
         }
         Class<?> result = this.classeCache.get(name);
         if (result != null) {

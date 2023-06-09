@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group 'com.mohistmc'
-version '1.0-SNAPSHOT'
+version '0.3'
 
 repositories {
     mavenCentral()
@@ -27,4 +28,24 @@ dependencies {
     implementation 'com.google.guava:guava:30.0-jre'
     implementation 'com.mohistmc:dynamicenum:0.1'
     implementation 'net.md-5:SpecialSource:1.11.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        mavenLocal()
+
+        maven {
+            name = "Mohist-Maven"
+            setUrl("file:/Mohist-Maven/maven/")
+        }
+    }
 }

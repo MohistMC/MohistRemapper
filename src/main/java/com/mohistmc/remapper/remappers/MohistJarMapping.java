@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.remapper.remappers;
 
 import com.google.common.collect.BiMap;
-import com.mohistmc.mohistremap.model.ClassMapping;
+import com.mohistmc.remapper.model.ClassMapping;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Modifier;

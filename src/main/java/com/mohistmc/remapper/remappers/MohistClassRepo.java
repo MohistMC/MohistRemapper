@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.remapper.remappers;
 
-import com.mohistmc.mohistremap.ClassLoaderContext;
+import com.mohistmc.remapper.ClassLoaderContext;
 import java.io.IOException;
 import java.io.InputStream;
 import net.md_5.specialsource.repo.CachingRepo;

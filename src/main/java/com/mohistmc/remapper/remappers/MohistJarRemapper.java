@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.remapper.remappers;
 
-import com.mohistmc.mohistremap.model.ClassMapping;
+import com.mohistmc.remapper.model.ClassMapping;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

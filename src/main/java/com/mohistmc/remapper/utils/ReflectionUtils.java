@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.utils;
+package com.mohistmc.remapper.utils;
 
 import java.lang.reflect.Field;
 

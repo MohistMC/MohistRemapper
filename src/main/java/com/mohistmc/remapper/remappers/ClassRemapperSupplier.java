@@ -16,11 +16,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.model;
+package com.mohistmc.remapper.remappers;
+
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
 
 /**
+ *
  * @author pyz
- * @date 2019/6/30 11:50 PM
+ * @date 2019/7/2 11:24 PM
  */
-public record MethodRedirectRule(String owner, String name, String desc, String remapOwner) {
+public interface ClassRemapperSupplier {
+    default ClassRemapper getClassRemapper( ClassVisitor cv) {
+        return new ClassRemapper(cv, (Remapper) this);
+    }
 }

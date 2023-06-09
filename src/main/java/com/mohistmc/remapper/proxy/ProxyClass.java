@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy;
+package com.mohistmc.remapper.proxy;
 
 
-import com.mohistmc.mohistremap.utils.ASMUtils;
-import com.mohistmc.mohistremap.utils.ReflectionUtils;
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.remapper.utils.ASMUtils;
+import com.mohistmc.remapper.utils.ReflectionUtils;
+import com.mohistmc.remapper.utils.RemapUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 

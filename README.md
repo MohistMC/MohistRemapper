@@ -1,4 +1,5 @@
-# MohistRemap
+# MohistRemapper
 
-### Remap system is separated from Mohist for mohist-1.18+
+### Mohist and Banner common remapper library
+
 

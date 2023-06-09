@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.remapper.remappers;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
